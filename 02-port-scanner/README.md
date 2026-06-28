@@ -39,3 +39,16 @@ Start Port:
 
 End Port:
 9000
+
+## Version 0.3 Features
+
+### Banner Detection
+
+The scanner attempts to identify service information from open ports.
+
+Example:
+
+Port 22 OPEN
+
+Banner:
+SSH-2.0-OpenSSH
