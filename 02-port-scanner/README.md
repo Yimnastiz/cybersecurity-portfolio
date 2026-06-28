@@ -71,3 +71,22 @@ Example:
 ### Scan Summary
 
 The tool reports the total number of open ports.
+
+## Version 0.5 Features
+
+### Command Line Interface
+
+The scanner supports CLI arguments.
+
+Example:
+
+python port_scanner.py -t TARGET -s START_PORT -e END_PORT
+
+
+Options:
+
+-t  Target IP
+
+-s  Start Port
+
+-e  End Port

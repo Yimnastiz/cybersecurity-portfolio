@@ -1,6 +1,7 @@
 import socket
+import argparse
 
-# Service database 
+
 services = {
     21: "FTP",
     22: "SSH",
@@ -13,23 +14,28 @@ services = {
     8000: "HTTP-ALT"
 }
 
+
 open_ports = []
+
 
 def get_service(port):
 
     if port in services:
         return services[port]
-    
+
     return "Unknown"
 
-def scan_ports(target, port):
+
+
+def scan_port(target, port):
 
     sock = socket.socket(
         socket.AF_INET,
         socket.SOCK_STREAM
     )
 
-    sock.settimeout(0.1)
+    sock.settimeout(1)
+
 
     try:
 
@@ -37,15 +43,18 @@ def scan_ports(target, port):
             (target, port)
         )
 
+
         if result == 0:
-            
+
             service = get_service(port)
 
             print(
                 f"[+] {port} OPEN ({service})"
             )
 
+
             open_ports.append(port)
+
 
             try:
 
@@ -53,63 +62,104 @@ def scan_ports(target, port):
 
                 banner = banner.decode().strip()
 
+
                 if banner:
 
                     print(
-                        f"      Banner: {banner}"
+                        f"    Banner: {banner}"
                     )
-            except:         
 
-             pass
 
-        else:
+            except:
 
-            pass
+                pass
+
 
     except socket.error:
 
         print(
-            f"Error on {port}"
+            f"Error scanning {port}"
         )
+
 
     finally:
 
         sock.close()
 
-target = input(
-    "Target IP : "
+
+
+# --------------------
+# Argument Setup
+# --------------------
+
+parser = argparse.ArgumentParser(
+    description="Simple Python Port Scanner"
 )
 
-start_port = int(
-    input("Start Port : ")
+
+parser.add_argument(
+    "-t",
+    "--target",
+    required=True,
+    help="Target IP address"
 )
 
-end_port = int(
-    input("End Port : ")
+
+parser.add_argument(
+    "-s",
+    "--start",
+    required=True,
+    type=int,
+    help="Starting port"
 )
 
-print("\n---------------------------")
+
+parser.add_argument(
+    "-e",
+    "--end",
+    required=True,
+    type=int,
+    help="Ending port"
+)
+
+
+args = parser.parse_args()
+
+
+
+target = args.target
+
+start_port = args.start
+
+end_port = args.end
+
+
+
+print("--------------------")
 print(
     f"Scanning {target}"
 )
-print("---------------------------\n")   
+print("--------------------")
+
+
 
 for port in range(
     start_port,
     end_port + 1
 ):
 
-    scan_ports(
+    scan_port(
         target,
         port
     )
 
-print("\n---------------------------")
 
+
+print("--------------------")
 print("Scan Complete")
 
 print(
-    f"Open Ports Found: {len(open_ports)}" 
+    f"Open Ports: {len(open_ports)}"
 )
 
-print("---------------------------")
+print("--------------------")
