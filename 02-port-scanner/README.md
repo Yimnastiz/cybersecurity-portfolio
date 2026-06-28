@@ -52,3 +52,22 @@ Port 22 OPEN
 
 Banner:
 SSH-2.0-OpenSSH
+
+## Version 0.4 Features
+
+### Service Detection
+
+The scanner maps common ports to known services.
+
+Example:
+
+22  -> SSH
+
+80  -> HTTP
+
+443 -> HTTPS
+
+
+### Scan Summary
+
+The tool reports the total number of open ports.
