@@ -1,14 +1,31 @@
 import socket
+
 target = input("Target IP : ")
-port = int(input("Port : "))
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+start_port = int(input("Start Port : "))
 
-result = sock.connect_ex((target, port))
+end_port = int(input("End Port : "))
 
-if result == 0:
-    print("Port is OPEN")
-else:
-    print("Port is CLOSED")
+print("--------------------")
+print(f"Scanning Target : {target}")
+print("--------------------")
 
-sock.settimeout(1)
+for port in range(start_port, end_port + 1):
+    
+    sock = socket.socket(
+        socket.AF_INET,
+        socket.SOCK_STREAM
+    )
+
+    sock.settimeout(0.5)
+
+    result = sock.connect_ex(
+        (target, port)
+    )
+
+    if result == 0:
+        print(f"[+] Port {port} OPEN")
+    else:
+        print(f"[-] Port {port} CLOSED")
+
+    sock.close()
