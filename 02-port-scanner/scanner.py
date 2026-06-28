@@ -1,5 +1,7 @@
 import socket
 import argparse
+import concurrent.futures
+import threading
 
 
 services = {
@@ -16,6 +18,8 @@ services = {
 
 
 open_ports = []
+
+lock = threading.Lock()
 
 
 def get_service(port):
@@ -34,7 +38,7 @@ def scan_port(target, port):
         socket.SOCK_STREAM
     )
 
-    sock.settimeout(1)
+    sock.settimeout(0.3)
 
 
     try:
@@ -52,8 +56,8 @@ def scan_port(target, port):
                 f"[+] {port} OPEN ({service})"
             )
 
-
-            open_ports.append(port)
+            with lock:
+                open_ports.append(port)
 
 
             try:
@@ -143,17 +147,22 @@ print("--------------------")
 
 
 
-for port in range(
-    start_port,
-    end_port + 1
-):
+with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+    
+    futures = []
 
-    scan_port(
-        target,
-        port
-    )
+    for port in range(start_port, end_port + 1):
 
+       futures.append(
+            executor.submit(
+                scan_port,
+                target,
+                port
+            )
+        )
 
+    for future in concurrent.futures.as_completed(futures):
+        future.result()
 
 print("--------------------")
 print("Scan Complete")

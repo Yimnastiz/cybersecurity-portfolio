@@ -90,3 +90,9 @@ Options:
 -s  Start Port
 
 -e  End Port
+
+## Version 0.6 Features
+
+- Multithreaded scanning
+- Faster port scanning
+- Reduced scan time using concurrent workers
