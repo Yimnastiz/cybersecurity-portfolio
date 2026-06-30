@@ -1,8 +1,14 @@
 Python Port Scanner Report
-============================
+===============================
 
-Scan Time:  2026-06-30 10:07:31.947925
+Target: 192.168.254.129
+Scan Time: 2026-06-30 11:05:23
 
-open Ports
+Ports Scanned: 7991
+Open Ports: 2
+Elapsed Time: 25.01 seconds
+
+Open Ports
+-------------------------------
 22 - SSH
 8000 - HTTP-ALT

@@ -2,6 +2,7 @@ import socket
 import argparse
 import concurrent.futures
 import threading
+import time
 from datetime import datetime
 
 
@@ -23,7 +24,9 @@ scan_results = []
 
 lock = threading.Lock()
 
-def save_report(target):
+scan_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def save_report(target, ports_scanned, elapsed):
 
     filename = "scan_report.txt"
 
@@ -34,16 +37,34 @@ def save_report(target):
         )
 
         file.write(
-            "============================\n\n"
+            "===============================\n\n"
         )
 
         file.write(
-            f"Scan Time:  {datetime.now()}\n\n"
+            f"Target: {target}\n"
         )
 
         file.write(
-            "open Ports\n"
+            f"Scan Time: {scan_time}\n\n"
         )
+
+        file.write(
+            f"Ports Scanned: {ports_scanned}\n"
+        )
+
+        file.write(
+            f"Open Ports: {len(open_ports)}\n"
+        )
+
+        file.write(
+            f"Elapsed Time: {elapsed:.2f} seconds\n\n"
+        )
+
+        file.write(
+            "Open Ports\n"
+        )
+
+        file.write("-------------------------------\n")
 
         for result in scan_results:
 
@@ -185,32 +206,41 @@ print(
 )
 print("--------------------")
 
+start_time = time.time()
 
+futures = []
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
-    
-    futures = []
 
     for port in range(start_port, end_port + 1):
 
-       futures.append(
-            executor.submit(
-                scan_port,
-                target,
-                port
-            )
+       future = executor.submit(
+            scan_port,
+            target,
+            port
         )
+    
+       futures.append(future)
 
-    for future in concurrent.futures.as_completed(futures):
-        future.result()
+concurrent.futures.wait(futures)
+
+end_time = time.time()
+
+elapsed = end_time - start_time
+
+ports_scanned = end_port - start_port + 1
 
 print("--------------------")
 print("Scan Complete")
+print("--------------------")
 
-print(
-    f"Open Ports: {len(open_ports)}"
-)
+print(f"Target: {target}")
 
-save_report(target)
+print(f"Ports Scanned: {end_port - start_port + 1}")
+
+print(f"Open Ports: {len(open_ports)}")
+
+print(f"Elapsed Time: {elapsed:.2f} seconds")
+save_report(target, ports_scanned, elapsed)
 
 print("--------------------")
