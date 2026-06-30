@@ -1,174 +1,211 @@
 # Python Port Scanner
 
-## Description
+![Python](https://img.shields.io/badge/Python-3.x-blue)
 
-A simple TCP port scanner written in Python.
+![Version](https://img.shields.io/badge/version-1.0-success)
 
-This project scans TCP ports and checks whether ports are open or closed.
+![Status](https://img.shields.io/badge/status-Stable-brightgreen)
+
+A multithreaded TCP Port Scanner written in Python for Cyber Security learning and portfolio.
+
+---
+
+## Project Overview
+
+This project was developed to learn network programming, socket communication, multithreading, and basic service detection.
+
+The scanner can:
+
+- Scan TCP ports
+- Detect common services
+- Grab service banners
+- Generate scan reports
+- Display colored output
+- Show real-time progress
+
+---
 
 ## Features
 
-- Scan TCP ports
-- Check open ports
-- Custom IP target
-- Custom port range
+- TCP Port Scanning
+- Multi-threaded Scanning
+- Banner Grabbing
+- Service Detection
+- CLI Arguments
+- Scan Statistics
+- Report Export (.txt)
+- Colored Terminal Output
+- Progress Indicator
+
+---
 
 ## Technologies
 
-- Python
-- Socket Library
+- Python 3
+- socket
+- argparse
+- concurrent.futures
+- threading
+- colorama
 
-## Lab Environment
+---
 
-Target:
-Ubuntu Server running on VMware
+## Project Structure
+
+02-port-scanner/
+│
+├── scanner.py
+├── README.md
+├── screenshots/
+│   ├── scan_terminal_v1.0.png
+│   └── scan_report_v1.0.png
+└── scan_report.txt
+
+---
+
+## Screenshots
+
+### Scan Running
+
+![Program Running](screenshots/scan_running_v1.0.png)
+
+### Scan Result
+
+![Scan](screenshots/scan_terminal_v1.0.png)
+
+### Report File
+
+![Report](screenshots/scan_report_v1.0.png)
+
+## Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/Yimnastiz/cybersecurity-portfolio.git
+```
+
+Go to the project
+
+```bash
+cd cybersecurity-portfolio/02-port-scanner
+```
+
+Install dependency
+
+```bash
+pip install colorama
+```
 
 ## Usage
 
-Run:
+Run
 
-python port_scanner.py
-
-Example:
-
-Target IP:
-192.168.254.129
-
-Start Port:
-20
-
-End Port:
-9000
-
-## Version 0.3 Features
-
-### Banner Detection
-
-The scanner attempts to identify service information from open ports.
-
-Example:
-
-Port 22 OPEN
-
-Banner:
-SSH-2.0-OpenSSH
-
-## Version 0.4 Features
-
-### Service Detection
-
-The scanner maps common ports to known services.
-
-Example:
-
-22  -> SSH
-
-80  -> HTTP
-
-443 -> HTTPS
-
-
-### Scan Summary
-
-The tool reports the total number of open ports.
-
-## Version 0.5 Features
-
-### Command Line Interface
-
-The scanner supports CLI arguments.
-
-Example:
-
-python port_scanner.py -t TARGET -s START_PORT -e END_PORT
-
-
-Options:
-
--t  Target IP
-
--s  Start Port
-
--e  End Port
-
-## Version 0.6 Features
-
-- Multithreaded scanning
-- Faster port scanning
-- Reduced scan time using concurrent workers
-
-# Version 0.7 - Export Scan Report
-
-## New Features
-
-- Export scan results to `scan_report.txt`
-- Save scan date and time
-- Store open ports and detected services
-- Better project structure for portfolio
-
-## Example
-
-```text
-Python Port Scanner Report
-==========================
-
-Target: 192.168.254.129
-
-Scan Time:
-2026-06-30 09:58:18
-
-Open Ports
-
-22 - SSH
-
-# Version 0.8 - Scan Statistics
-
-## New Features
-
-- Measure scan execution time
-- Display total scanned ports
-- Wait for all threads before finishing
-- Improved scan report
-
-## Example Output
-
-```text
---------------------
-Scan Complete
---------------------
-
-Target: 192.168.254.129
-Ports Scanned: 7991
-Open Ports: 2
-Elapsed Time: 0.38 seconds
-
-Report saved: scan_report.txt
+```bash
+python scanner.py -t 192.168.254.129 -s 20 -e 100
 ```
 
-## Report Example
+Example
 
 ```text
-Python Port Scanner Report
-==========================
+========================================
+Python Port Scanner v1.0
+========================================
+
+Scanning 192.168.254.129
+
+[+] Port 22 | SSH | OPEN
+
+Progress: 81/81 (100%)
+
+Scan Complete
+```
+
+---
+
+## Example Report
 
 Target: 192.168.254.129
 Scan Time: 2026-06-30 10:15:20
 
-Ports Scanned: 7991
+Ports Scanned: 81
 Open Ports: 2
-Elapsed Time: 0.38 seconds
+Elapsed Time: 0.42 sec
 
 Open Ports
 ----------
 22 - SSH
-8000 - HTTP-ALT
-```
+53 - DNS
+
+---
+
+# Development Timeline
+
+### v0.1
+
+- Basic TCP Scanner
+
+### v0.2
+
+- Better Code Structure
+
+### v0.3
+
+- Banner Detection
+
+### v0.4
+
+- Service Detection
+
+### v0.5
+
+- Command Line Arguments
+
+### v0.6
+
+- Multithreading
+
+### v0.7
+
+- Export Scan Report
+
+### v0.8
+
+- Scan Statistics
+
+### v0.9
+
+- Colored Output
+- Progress Bar
+
+### v1.0
+
+- Code Refactoring
+- main()
+- Better Project Structure
+
+---
 
 ## Skills Learned
 
-- Python ThreadPoolExecutor
-- Future Objects
-- concurrent.futures.wait()
+- Python Networking
+- TCP Socket Programming
+- Multithreading
+- Thread Synchronization
+- Banner Grabbing
+- CLI Development
+- File Handling
 - Performance Measurement
-- Execution Time Analysis
-- Report Enhancement
+- Clean Code Structure
+
+---
+
+
+## Author
+
+Punnawit
+
+Cyber Security Student
+
+GitHub:
+https://github.com/Yimnastiz
