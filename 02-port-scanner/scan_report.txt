@@ -1,0 +1,8 @@
+Python Port Scanner Report
+============================
+
+Scan Time:  2026-06-30 10:07:31.947925
+
+open Ports
+22 - SSH
+8000 - HTTP-ALT

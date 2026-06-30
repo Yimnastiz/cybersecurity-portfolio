@@ -2,6 +2,7 @@ import socket
 import argparse
 import concurrent.futures
 import threading
+from datetime import datetime
 
 
 services = {
@@ -18,8 +19,42 @@ services = {
 
 
 open_ports = []
+scan_results = []
 
 lock = threading.Lock()
+
+def save_report(target):
+
+    filename = "scan_report.txt"
+
+    with open(filename, "w") as file:
+
+        file.write(
+            "Python Port Scanner Report\n"
+        )
+
+        file.write(
+            "============================\n\n"
+        )
+
+        file.write(
+            f"Scan Time:  {datetime.now()}\n\n"
+        )
+
+        file.write(
+            "open Ports\n"
+        )
+
+        for result in scan_results:
+
+            file.write(
+                result + "\n"
+            )
+
+    print(
+        f"\nReport saved: {filename}"
+    )
+ 
 
 
 def get_service(port):
@@ -57,7 +92,12 @@ def scan_port(target, port):
             )
 
             with lock:
+
                 open_ports.append(port)
+
+                scan_results.append(
+                    f"{port} - {service}"
+                )
 
 
             try:
@@ -170,5 +210,7 @@ print("Scan Complete")
 print(
     f"Open Ports: {len(open_ports)}"
 )
+
+save_report(target)
 
 print("--------------------")
