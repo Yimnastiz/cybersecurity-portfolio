@@ -4,7 +4,9 @@ import concurrent.futures
 import threading
 import time
 from datetime import datetime
+from colorama import Fore, Style, init
 
+init(autoreset = True)
 
 services = {
     21: "FTP",
@@ -20,7 +22,10 @@ services = {
 
 
 open_ports = []
+
 scan_results = []
+
+scanned_ports = 0
 
 lock = threading.Lock()
 
@@ -60,16 +65,20 @@ def save_report(target, ports_scanned, elapsed):
             f"Elapsed Time: {elapsed:.2f} seconds\n\n"
         )
 
-        file.write(
-            "Open Ports\n"
-        )
-
-        file.write("-------------------------------\n")
+        file.write("Open Ports\n")
+        
+        file.write("====================\n")
+        
+        file.write(f"{'Port':<10}{'Service'}\n")
+        
+        file.write("--------------------\n")
 
         for result in scan_results:
 
+            port, service = result.split(" - ")
+
             file.write(
-                result + "\n"
+                f"{port:<10}{service}\n"
             )
 
     print(
@@ -85,10 +94,28 @@ def get_service(port):
 
     return "Unknown"
 
+def print_summary(target, ports_scanned, elapsed):
+
+    print("--------------------")
+    print("Scan Complete")
+    print("--------------------")
+
+    print(f"Target: {target}")
+    print(f"Ports Scanned: {ports_scanned}")
+    print(f"Open Ports: {len(open_ports)}")
+    print(f"Elapsed Time: {elapsed:.2f} seconds")
+
+def print_banner():
+
+    print("=" * 40)
+    print(" Python Port Scanner v1.0")
+    print(" By Punnawit")
+    print("=" * 40)
 
 
 def scan_port(target, port):
 
+    global scanned_ports
     sock = socket.socket(
         socket.AF_INET,
         socket.SOCK_STREAM
@@ -109,7 +136,8 @@ def scan_port(target, port):
             service = get_service(port)
 
             print(
-                f"[+] {port} OPEN ({service})"
+                Fore.GREEN +
+                f"[+] Port {port:<5} | {service:<10} | OPEN"
             )
 
             with lock:
@@ -143,11 +171,21 @@ def scan_port(target, port):
     except socket.error:
 
         print(
+            Fore.RED +
             f"Error scanning {port}"
         )
 
 
     finally:
+
+        with lock:
+            
+            scanned_ports += 1
+            progress = (scanned_ports / ports_scanned) * 100
+            print(
+                Fore.CYAN +
+                f"Progress: {scanned_ports}/{ports_scanned} ({progress:.1f}%)",end="\r"
+            )
 
         sock.close()
 
@@ -197,11 +235,13 @@ target = args.target
 start_port = args.start
 
 end_port = args.end
+ports_scanned = end_port - start_port + 1
 
 
-
+print_banner()
 print("--------------------")
 print(
+    Fore.YELLOW +
     f"Scanning {target}"
 )
 print("--------------------")
@@ -228,19 +268,7 @@ end_time = time.time()
 
 elapsed = end_time - start_time
 
-ports_scanned = end_port - start_port + 1
-
-print("--------------------")
-print("Scan Complete")
-print("--------------------")
-
-print(f"Target: {target}")
-
-print(f"Ports Scanned: {end_port - start_port + 1}")
-
-print(f"Open Ports: {len(open_ports)}")
-
-print(f"Elapsed Time: {elapsed:.2f} seconds")
+print_summary(target, ports_scanned, elapsed)
 save_report(target, ports_scanned, elapsed)
 
 print("--------------------")

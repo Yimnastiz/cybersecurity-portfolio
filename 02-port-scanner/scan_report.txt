@@ -2,7 +2,7 @@ Python Port Scanner Report
 ===============================
 
 Target: 192.168.254.129
-Scan Time: 2026-06-30 11:05:23
+Scan Time: 2026-06-30 11:34:18
 
 Ports Scanned: 7991
 Open Ports: 2
