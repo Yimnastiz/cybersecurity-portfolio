@@ -3,21 +3,13 @@ import socket
 def main():
 
     sock = socket.socket(
-        socket.AF_INET,
+        socket.AF_PACKET,
         socket.SOCK_RAW<
-        socket.IPPROTO_IP
+        socket.ntohs(3)
     )
 
     host = input("Local IP Address: ")
-
-    sock.bind((host,0))
-
-    sock.setsockopt(
-        socket.IPPROTO_IP,
-        socket.IP_HDRINCL,
-        1
-    )
-
+    
     print("Waiting for packet . . .\n")
 
     packet = sock.recvfrom(65535)
