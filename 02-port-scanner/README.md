@@ -67,15 +67,15 @@ The scanner can:
 
 ### Scan Running
 
-![Program Running](./screenshots/scan_running_v1.0.png.png)
+![Program Running](screenshots/scan_running_v1.0.png)
 
 ### Scan Result
 
-![Scan](screenshots/scan_terminal_v1.0.png.png)
+![Scan](screenshots/scan_terminal_v1.0.png)
 
 ### Report File
 
-![Report](./screenshots/scan_report_v1.0.png.png)
+![Report](screenshots/scan_report_v1.0.png)
 
 ## Installation
 
