@@ -10,9 +10,19 @@ def main():
 
     print("Waiting for packet . . .\n")
 
-    packet = sock.recvfrom(65535)
+    packet_count = 0
+    
+    while True:
 
-    print(packet)
+        raw_data, address = sock.recvfrom(65535)
+
+        packet_count += 1
+
+        print("=" * 50)
+        print(f"Packet #{packet_count}")
+        print(f"Interface : {address[0]}")
+        print(f"Packet Size : {len(raw_data)} bytes")
+        print("=" * 50)
 
 if __name__ == "__main__":
     main()
