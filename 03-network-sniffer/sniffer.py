@@ -8,8 +8,6 @@ def main():
         socket.ntohs(3)
     )
 
-    host = input("Local IP Address: ")
-
     print("Waiting for packet . . .\n")
 
     packet = sock.recvfrom(65535)
