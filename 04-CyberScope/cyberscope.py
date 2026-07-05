@@ -187,6 +187,8 @@ def main():
             ) = ipv4_packet(raw_data[14:])
 
             protocol_name = get_protocol_name(ip_protocol)
+            if ip_protocol != 1:
+                continue
 
             packet_count += 1
 
