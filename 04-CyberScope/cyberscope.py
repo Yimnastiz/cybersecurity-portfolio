@@ -139,6 +139,12 @@ def main():
     print("Listening for packets ... \n")
 
     packet_count = 0
+    tcp_count = 0
+    udp_count = 0
+    icmp_count = 0
+    unknown_count = 0
+
+try:
 
     while True:
 
@@ -156,6 +162,18 @@ def main():
         protocol_name = get_protocol_name(ip_protocol)
 
         packet_count += 1
+
+        if ip_protocol == 6:
+            tcp_count += 1
+
+        elif ip_protocol == 17:
+            udp_count += 1
+
+        elif ip_protocol == 1:
+            icmp_count += 1
+
+        else:
+            unknown_count += 1
 
         print("=" * 50)
 
@@ -231,6 +249,22 @@ def main():
               print(f"Source Service : {get_service_name(source_port)}")
               print(f"Dest Service   : {get_service_name(destination_port)}")
               print(f"Length       : {length}")
+
+except KeyboardInterrupt:
+
+    print("\n")
+
+    print("=" * 50)
+    print("Statistics")
+    print("-" * 20)
+    print(f"Total Packets : {packet_count}")
+    print(f"TCP           : {tcp_count}")
+    print(f"UDP           : {udp_count}")
+    print(f"ICMP          : {icmp_count}")
+    print(f"Unknown       : {unknown_count}")
+    print("=" * 50)
+
+    print("\nProgram terminated.")
                  
 if __name__ == "__main__":
     main()
