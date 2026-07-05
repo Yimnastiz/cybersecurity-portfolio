@@ -130,7 +130,8 @@ def main():
         ) = ipv4_packet(raw_data[14:])
 
         protocol_name = get_protocol_name(ip_protocol)
-
+        print(ip_protocol)
+        
         packet_count += 1
 
         print("=" * 50)
