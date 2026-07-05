@@ -2,6 +2,27 @@ import socket
 import struct
 
 def main():
+    if protocol == 6:
+
+        tcp_start = 14 + header_length
+
+        source_port, destination_port = parse_tcp(
+            raw_data[tcp_start:]
+        )
+
+        print("TCP")
+        print("-" * 20)
+        print(f"Source Port   : {source_port}")
+        print(f"Dest Port     : {destination_port}")
+
+    def parse_tcp(data):
+
+        source_port, destination_port = struct.unpack(
+            "!HH",
+            data[:4]
+        )
+
+        return source_port, destination_port
 
     def ipv4_packet(data):
 
