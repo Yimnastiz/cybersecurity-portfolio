@@ -24,5 +24,5 @@ def main():
               f"Interface: {address[0]} |"
               f"Size: {len(raw_data)} bytes")
         
-    if __name__ == "__main__":
-       main()
+if __name__ == "__main__":
+    main()
