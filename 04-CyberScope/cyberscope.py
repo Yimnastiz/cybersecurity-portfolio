@@ -1,5 +1,6 @@
 import socket   
 import struct
+import datetime
 
 def get_mac_address(bytes_address):
 
@@ -189,6 +190,9 @@ def main():
     icmp_count = 0
     unknown_count = 0
 
+    packet_size = len(raw_data)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     try:
 
         while True:
@@ -223,6 +227,8 @@ def main():
             print("=" * 50)
 
             print(f"Packet #{packet_count}")
+            print(f"Timestamp : {timestamp}")
+            print(f"Packet Size : {packet_size} bytes")
             
             print()
             
