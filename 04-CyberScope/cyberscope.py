@@ -1,30 +1,29 @@
 import socket   
 import struct
 
-def main():
-    if protocol == 6:
+def get_mac_address(bytes_address):
 
-        tcp_start = 14 + header_length
+        return ':'.join(
+            map(
+                '{:02x}'.format,
+                bytes_address
+            )
+        ).upper()
 
-        source_port, destination_port = parse_tcp(
-            raw_data[tcp_start:]
+def ethernet_frame(data):
+
+        destination_mac, source_mac, protocol = struct.unpack(
+            "!6s6sH",
+            data[:14]
         )
 
-        print("TCP")
-        print("-" * 20)
-        print(f"Source Port   : {source_port}")
-        print(f"Dest Port     : {destination_port}")
-
-    def parse_tcp(data):
-
-        source_port, destination_port = struct.unpack(
-            "!HH",
-            data[:4]
+        return (
+            get_mac_address(destination_mac),
+            get_mac_address(source_mac),
+            socket.htons(protocol),
         )
 
-        return source_port, destination_port
-
-    def ipv4_packet(data):
+def ipv4_packet(data):
 
         version_header_length = data[0]
 
@@ -49,27 +48,16 @@ def main():
             destination
         )
 
-    def ethernet_frame(data):
+def parse_tcp(data):
 
-        destination_mac, source_mac, protocol = struct.unpack(
-            "!6s6sH",
-            data[:14]
+        source_port, destination_port = struct.unpack(
+            "!HH",
+            data[:4]
         )
 
-        return (
-            get_mac_address(destination_mac),
-            get_mac_address(source_mac),
-            socket.htons(protocol),
-        )
-    
-    def get_mac_address(bytes_address):
+        return source_port, destination_port
 
-        return ':'.join(
-            map(
-                '{:02x}'.format,
-                bytes_address
-            )
-        ).upper()
+def main():
 
     sock = socket.socket(
         socket.AF_PACKET,
@@ -122,6 +110,20 @@ def main():
         print(f"Dest IP      : {destination_ip}")
 
         print("=" * 50)
+
+        if ip_protocol == 6:
+
+            tcp_start = 14 + header_length
+
+            source_port, destination_port = parse_tcp(
+                raw_data[tcp_start:]
+            )
+
+            print()
+            print("TCP")
+            print("-" * 20)
+            print(f"Source Port   : {source_port}")
+            print(f"Dest Port     : {destination_port}")
         
 if __name__ == "__main__":
     main()
