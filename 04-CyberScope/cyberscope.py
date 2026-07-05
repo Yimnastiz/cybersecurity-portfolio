@@ -78,6 +78,16 @@ def parse_tcp(data):
             flag_fin
         )
 
+def get_protocol_name(protocol):
+      
+      protocols = {
+            1: "ICMP",
+            6: "TCP",
+            17: "UDP"
+      }
+
+      return protocols.get(protocol, "Unknown")
+
 def main():
 
     sock = socket.socket(
@@ -106,6 +116,8 @@ def main():
             destination_ip
         ) = ipv4_packet(raw_data[14:])
 
+        protocol_name = get_protocol_name(ip_protocol)
+
         packet_count += 1
 
         print("=" * 50)
@@ -126,7 +138,7 @@ def main():
         print(f"Version      : {version}")
         print(f"Header Len   : {header_length}")
         print(f"TTL          : {ttl}")
-        print(f"Protocol     : {ip_protocol}")
+        print(f"Protocol     : {protocol_name} ({ip_protocol}")
         print(f"Source IP    : {source_ip}")
         print(f"Dest IP      : {destination_ip}")
 
