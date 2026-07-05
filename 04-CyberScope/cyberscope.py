@@ -88,6 +88,19 @@ def get_protocol_name(protocol):
 
       return protocols.get(protocol, "Unknown")
 
+def parse_udp(data):
+      
+      source_port, destination_port, length, checksum = struct.unpack(
+            "!HHHH",
+            data[:8]
+      )
+
+      return (
+            source_port,
+            destination_port,
+            length
+      )
+
 def main():
 
     sock = socket.socket(
@@ -138,7 +151,7 @@ def main():
         print(f"Version      : {version}")
         print(f"Header Len   : {header_length}")
         print(f"TTL          : {ttl}")
-        print(f"Protocol     : {protocol_name} ({ip_protocol}")
+        print(f"Protocol     : {protocol_name} ({ip_protocol})")
         print(f"Source IP    : {source_ip}")
         print(f"Dest IP      : {destination_ip}")
 
@@ -175,6 +188,21 @@ def main():
             print(f"RST : {rst}")
             print(f"PSH : {psh}")
             print(f"URG : {urg}") 
+
+        elif ip_protocol == 17:
+              
+              udp_start = 14 + header_length
+
+              source_port, destination_port, length = parse_udp(
+                    raw_data[udp_start:]
+              )
+
+              print()
+              print("UDP")
+              print("-" * 20)
+              print(f"Source Port  : {source_port}")
+              print(f"Dest Port    : {destination_port}")
+              print(f"Length       : {length}")
                  
 if __name__ == "__main__":
     main()
