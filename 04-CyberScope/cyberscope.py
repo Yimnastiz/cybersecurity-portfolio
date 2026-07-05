@@ -89,17 +89,17 @@ def get_protocol_name(protocol):
       return protocols.get(protocol, "Unknown")
 
 def parse_udp(data):
-      
-      source_port, destination_port, length, checksum = struct.unpack(
-            "!HHHH",
-            data[:8]
-      )
 
-      return (
-            source_port,
-            destination_port,
-            length
-      )
+    source_port, destination_port, length, checksum = struct.unpack(
+        "!HHHH",
+        data[:8]
+    )
+
+    return (
+        source_port,
+        destination_port,
+        length
+    )
 
 def main():
 
@@ -130,8 +130,7 @@ def main():
         ) = ipv4_packet(raw_data[14:])
 
         protocol_name = get_protocol_name(ip_protocol)
-        print(ip_protocol)
-        
+
         packet_count += 1
 
         print("=" * 50)
