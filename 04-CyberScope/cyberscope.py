@@ -60,6 +60,8 @@ def parse_tcp(data):
               data[12:14]
         )[0]
 
+        offset = (offset_reserved_flags >> 12) * 4
+
         flag_urg = (offset_reserved_flags & 32) != 0
         flag_ack = (offset_reserved_flags & 16) != 0
         flag_psh = (offset_reserved_flags & 8) != 0
@@ -70,6 +72,7 @@ def parse_tcp(data):
         return (
             source_port, 
             destination_port,
+            offset,
             flag_urg,
             flag_ack,
             flag_psh,
@@ -152,6 +155,21 @@ def get_icmp_description(icmp_type):
           "Other"
      )
 
+def format_multi_line(prefix, string, size=16):
+     
+    size -= len(prefix)
+
+    if isinstance(string, bytes):
+        string = ' '.join(
+            f'{byte:02X}' for byte in string
+        )
+
+    return '\n'.join(
+        prefix + string[i:i+size]
+        for i in range(0, len(string), size)
+    )
+    
+
 def main():
 
     sock = socket.socket(
@@ -187,9 +205,7 @@ def main():
             ) = ipv4_packet(raw_data[14:])
 
             protocol_name = get_protocol_name(ip_protocol)
-            if ip_protocol != 1:
-                continue
-
+    
             packet_count += 1
 
             if ip_protocol == 6:
@@ -235,6 +251,7 @@ def main():
                 (
                     source_port,
                     destination_port,
+                    offset,
                     urg,
                     ack,
                     psh,
@@ -261,6 +278,21 @@ def main():
                 print(f"RST : {rst}")
                 print(f"PSH : {psh}")
                 print(f"URG : {urg}") 
+
+                payload = raw_data[tcp_start + offset:]
+
+                if len(payload) > 0:
+                     
+                    print()
+                    print("Payload")
+                    print("-" * 20)
+
+                    print(
+                         format_multi_line(
+                              "",
+                              payload[:64]
+                         )
+                    )
 
             elif ip_protocol == 17:
                 
