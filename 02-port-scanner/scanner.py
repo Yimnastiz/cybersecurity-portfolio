@@ -53,7 +53,7 @@ def save_report(target, ports_scanned, elapsed):
         file.write("--------------------\n")
 
         for result in scan_results:
-
+            print(result)
             port, service = result.split(" - ")
 
             file.write(f"{port:<10}{service}\n")
@@ -252,6 +252,6 @@ def main():
 
     print("--------------------")
 
-
+    print(scan_results)
 if __name__ == "__main__":
     main()

@@ -1,16 +1,16 @@
 Python Port Scanner Report
 ===============================
 
-Target: 192.168.254.129
-Scan Time: 2026-06-30 13:48:45
+Target: 192.168.1.58
+Scan Time: 2026-07-01 21:04:47
 
-Ports Scanned: 7991
+Ports Scanned: 181
 Open Ports: 2
-Elapsed Time: 25.07 seconds
+Elapsed Time: 0.65 seconds
 
 Open Ports
 ====================
 Port      Service
 --------------------
-22        SSH
-8000      HTTP-ALT
+135       Unknown
+139       Unknown
