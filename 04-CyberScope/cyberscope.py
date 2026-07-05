@@ -101,6 +101,18 @@ def parse_udp(data):
         length
     )
 
+def parse_icmp(data):
+     
+     icmp_type, code, checksum = struct.unpack(
+          "!BBH",
+          data[:4]
+     )
+
+     return (
+          icmp_type,
+          code
+     )
+
 def get_service_name(port):
 
     services = {
@@ -124,6 +136,21 @@ def get_service_name(port):
     }
 
     return services.get(port, "Unknown")
+
+def get_icmp_description(icmp_type):
+     
+     descriptions = {
+        0: "Echo Reply",
+        3: "Destination Unreachable",
+        5: "Redirect",
+        8: "Echo Request",
+        11: "Time Exceeded"
+     }
+
+     return description.get(
+          icmp_type,
+          "Other"
+     )
 
 def main():
 
@@ -249,6 +276,24 @@ def main():
                 print(f"Source Service : {get_service_name(source_port)}")
                 print(f"Dest Service   : {get_service_name(destination_port)}")
                 print(f"Length       : {length}")
+
+            elif ip_protocol == 1:
+                 
+                icmp_start = 14 + header_length
+
+                icmp_type, code = parse_icmp(
+                      raw_data[icmp_start:]
+                )
+
+                print()
+                print("ICMP")
+                print("-" * 20)
+                print(f"Type        : {icmp_type}")
+                print(f"Code        : {code}")
+                print(
+                    f"Description : "
+                    f"{get_icmp_description(icmp_type)}"
+                )
 
     except KeyboardInterrupt:
 
