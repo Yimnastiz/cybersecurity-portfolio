@@ -101,6 +101,30 @@ def parse_udp(data):
         length
     )
 
+def get_service_name(port):
+
+    services = {
+        20: "FTP-DATA",
+        21: "FTP",
+        22: "SSH",
+        23: "TELNET",
+        25: "SMTP",
+        53: "DNS",
+        67: "DHCP",
+        68: "DHCP",
+        80: "HTTP",
+        110: "POP3",
+        123: "NTP",
+        143: "IMAP",
+        161: "SNMP",
+        443: "HTTPS",
+        3306: "MySQL",
+        3389: "RDP",
+        8080: "HTTP-ALT"  
+    }
+
+    return services.get(port, "Unknown")
+
 def main():
 
     sock = socket.socket(
@@ -179,6 +203,8 @@ def main():
             print("-" * 20)
             print(f"Source Port   : {source_port}")
             print(f"Dest Port     : {destination_port}")
+            print(f"Source Service : {get_service_name(source_port)}")
+            print(f"Dest Service   : {get_service_name(destination_port)}")
 
             print("Flags")
             print("-" * 20)
@@ -202,6 +228,8 @@ def main():
               print("-" * 20)
               print(f"Source Port  : {source_port}")
               print(f"Dest Port    : {destination_port}")
+              print(f"Source Service : {get_service_name(source_port)}")
+              print(f"Dest Service   : {get_service_name(destination_port)}")
               print(f"Length       : {length}")
                  
 if __name__ == "__main__":
