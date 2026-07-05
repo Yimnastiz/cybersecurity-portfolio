@@ -156,6 +156,25 @@ def get_icmp_description(icmp_type):
           "Other"
      )
 
+def get_tcp_state(syn, ack, fin, rst):
+
+    if syn and not ack:
+        return "Connection Start (SYN)"
+
+    elif syn and ack:
+        return "Connection Accepted (SYN-ACK)"
+
+    elif fin:
+        return "Connection Closing (FIN)"
+
+    elif rst:
+        return "Connection Reset (RST)"
+
+    elif ack:
+        return "Connection Established"
+
+    return "Unknown"
+
 def format_multi_line(prefix, string, size=16):
      
     size -= len(prefix)
@@ -180,7 +199,7 @@ def main():
     )
 
     print("=" * 50)
-    print("CyberScope v0.1")
+    print("CyberScope v0.9.3")
     print("=" * 50)
     print("Listening for packets ... \n")
 
@@ -198,7 +217,7 @@ def main():
 
             packet_size = len(raw_data)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            
+
             destination_mac, source_mac, protocol = ethernet_frame(raw_data)
             (
                 version,
@@ -285,6 +304,8 @@ def main():
                 print(f"RST : {rst}")
                 print(f"PSH : {psh}")
                 print(f"URG : {urg}") 
+
+                print(f"TCP State    : {get_tcp_state(syn, ack, fin, rst)}")
 
                 payload = raw_data[tcp_start + offset:]
 
