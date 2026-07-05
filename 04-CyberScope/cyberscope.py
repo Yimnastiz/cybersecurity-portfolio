@@ -190,14 +190,15 @@ def main():
     icmp_count = 0
     unknown_count = 0
 
-    packet_size = len(raw_data)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     try:
 
         while True:
 
             raw_data, address = sock.recvfrom(65535)
+
+            packet_size = len(raw_data)
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
             destination_mac, source_mac, protocol = ethernet_frame(raw_data)
             (
                 version,
