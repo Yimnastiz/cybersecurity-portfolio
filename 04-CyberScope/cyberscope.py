@@ -55,7 +55,28 @@ def parse_tcp(data):
             data[:4]
         )
 
-        return source_port, destination_port
+        offset_reserved_flags = struct.unpack(
+              "!H",
+              data[12:14]
+        )[0]
+
+        flag_urg = (offset_reserved_flags & 32) != 0
+        flag_ack = (offset_reserved_flags & 16) != 0
+        flag_psh = (offset_reserved_flags & 8) != 0
+        flag_rst = (offset_reserved_flags & 4) != 0
+        flag_syn = (offset_reserved_flags & 2) != 0
+        flag_fin = (offset_reserved_flags & 1) != 0
+
+        return (
+            source_port, 
+            destination_port,
+            flag_urg,
+            flag_ack,
+            flag_psh,
+            flag_rst,
+            flag_syn,
+            flag_fin
+        )
 
 def main():
 
@@ -115,8 +136,17 @@ def main():
 
             tcp_start = 14 + header_length
 
-            source_port, destination_port = parse_tcp(
-                raw_data[tcp_start:]
+            (
+                  source_port,
+                  destination_port,
+                  urg,
+                  ack,
+                  psh,
+                  rst,
+                  syn,
+                  fin
+            ) = parse_tcp(
+                  raw_data[tcp_start:]
             )
 
             print()
@@ -124,6 +154,15 @@ def main():
             print("-" * 20)
             print(f"Source Port   : {source_port}")
             print(f"Dest Port     : {destination_port}")
-        
+
+            print("Flags")
+            print("-" * 20)
+            print(f"SYN : {syn}")
+            print(f"ACK : {ack}")
+            print(f"FIN : {fin}")
+            print(f"RST : {rst}")
+            print(f"PSH : {psh}")
+            print(f"URG : {urg}") 
+                 
 if __name__ == "__main__":
     main()
