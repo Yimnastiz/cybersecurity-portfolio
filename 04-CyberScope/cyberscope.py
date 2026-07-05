@@ -144,127 +144,127 @@ def main():
     icmp_count = 0
     unknown_count = 0
 
-try:
+    try:
 
-    while True:
+        while True:
 
-        raw_data, address = sock.recvfrom(65535)
-        destination_mac, source_mac, protocol = ethernet_frame(raw_data)
-        (
-            version,
-            header_length,
-            ttl,
-            ip_protocol,
-            source_ip,
-            destination_ip
-        ) = ipv4_packet(raw_data[14:])
-
-        protocol_name = get_protocol_name(ip_protocol)
-
-        packet_count += 1
-
-        if ip_protocol == 6:
-            tcp_count += 1
-
-        elif ip_protocol == 17:
-            udp_count += 1
-
-        elif ip_protocol == 1:
-            icmp_count += 1
-
-        else:
-            unknown_count += 1
-
-        print("=" * 50)
-
-        print(f"Packet #{packet_count}")
-        
-        print()
-        
-        print("Ethernet")
-        print("-" * 20)
-        print(f"Source MAC: {source_mac}")
-        print(f"Dest MAC  : {destination_mac}")
-
-        print()
-
-        print("IPv4")
-        print("-" * 20)
-        print(f"Version      : {version}")
-        print(f"Header Len   : {header_length}")
-        print(f"TTL          : {ttl}")
-        print(f"Protocol     : {protocol_name} ({ip_protocol})")
-        print(f"Source IP    : {source_ip}")
-        print(f"Dest IP      : {destination_ip}")
-
-        print("=" * 50)
-
-        if ip_protocol == 6:
-
-            tcp_start = 14 + header_length
-
+            raw_data, address = sock.recvfrom(65535)
+            destination_mac, source_mac, protocol = ethernet_frame(raw_data)
             (
-                  source_port,
-                  destination_port,
-                  urg,
-                  ack,
-                  psh,
-                  rst,
-                  syn,
-                  fin
-            ) = parse_tcp(
-                  raw_data[tcp_start:]
-            )
+                version,
+                header_length,
+                ttl,
+                ip_protocol,
+                source_ip,
+                destination_ip
+            ) = ipv4_packet(raw_data[14:])
+
+            protocol_name = get_protocol_name(ip_protocol)
+
+            packet_count += 1
+
+            if ip_protocol == 6:
+                tcp_count += 1
+
+            elif ip_protocol == 17:
+                udp_count += 1
+
+            elif ip_protocol == 1:
+                icmp_count += 1
+
+            else:
+                unknown_count += 1
+
+            print("=" * 50)
+
+            print(f"Packet #{packet_count}")
+            
+            print()
+            
+            print("Ethernet")
+            print("-" * 20)
+            print(f"Source MAC: {source_mac}")
+            print(f"Dest MAC  : {destination_mac}")
 
             print()
-            print("TCP")
+
+            print("IPv4")
             print("-" * 20)
-            print(f"Source Port   : {source_port}")
-            print(f"Dest Port     : {destination_port}")
-            print(f"Source Service : {get_service_name(source_port)}")
-            print(f"Dest Service   : {get_service_name(destination_port)}")
+            print(f"Version      : {version}")
+            print(f"Header Len   : {header_length}")
+            print(f"TTL          : {ttl}")
+            print(f"Protocol     : {protocol_name} ({ip_protocol})")
+            print(f"Source IP    : {source_ip}")
+            print(f"Dest IP      : {destination_ip}")
 
-            print("Flags")
-            print("-" * 20)
-            print(f"SYN : {syn}")
-            print(f"ACK : {ack}")
-            print(f"FIN : {fin}")
-            print(f"RST : {rst}")
-            print(f"PSH : {psh}")
-            print(f"URG : {urg}") 
+            print("=" * 50)
 
-        elif ip_protocol == 17:
-              
-              udp_start = 14 + header_length
+            if ip_protocol == 6:
 
-              source_port, destination_port, length = parse_udp(
-                    raw_data[udp_start:]
-              )
+                tcp_start = 14 + header_length
 
-              print()
-              print("UDP")
-              print("-" * 20)
-              print(f"Source Port  : {source_port}")
-              print(f"Dest Port    : {destination_port}")
-              print(f"Source Service : {get_service_name(source_port)}")
-              print(f"Dest Service   : {get_service_name(destination_port)}")
-              print(f"Length       : {length}")
+                (
+                    source_port,
+                    destination_port,
+                    urg,
+                    ack,
+                    psh,
+                    rst,
+                    syn,
+                    fin
+                ) = parse_tcp(
+                    raw_data[tcp_start:]
+                )
 
-except KeyboardInterrupt:
+                print()
+                print("TCP")
+                print("-" * 20)
+                print(f"Source Port   : {source_port}")
+                print(f"Dest Port     : {destination_port}")
+                print(f"Source Service : {get_service_name(source_port)}")
+                print(f"Dest Service   : {get_service_name(destination_port)}")
 
-    print("\n")
+                print("Flags")
+                print("-" * 20)
+                print(f"SYN : {syn}")
+                print(f"ACK : {ack}")
+                print(f"FIN : {fin}")
+                print(f"RST : {rst}")
+                print(f"PSH : {psh}")
+                print(f"URG : {urg}") 
 
-    print("=" * 50)
-    print("Statistics")
-    print("-" * 20)
-    print(f"Total Packets : {packet_count}")
-    print(f"TCP           : {tcp_count}")
-    print(f"UDP           : {udp_count}")
-    print(f"ICMP          : {icmp_count}")
-    print(f"Unknown       : {unknown_count}")
-    print("=" * 50)
+            elif ip_protocol == 17:
+                
+                udp_start = 14 + header_length
 
-    print("\nProgram terminated.")
+                source_port, destination_port, length = parse_udp(
+                        raw_data[udp_start:]
+                )
+
+                print()
+                print("UDP")
+                print("-" * 20)
+                print(f"Source Port  : {source_port}")
+                print(f"Dest Port    : {destination_port}")
+                print(f"Source Service : {get_service_name(source_port)}")
+                print(f"Dest Service   : {get_service_name(destination_port)}")
+                print(f"Length       : {length}")
+
+    except KeyboardInterrupt:
+
+        print("\n")
+
+        print("=" * 50)
+        print("Statistics")
+        print("-" * 20)
+        print(f"Total Packets : {packet_count}")
+        print(f"TCP           : {tcp_count}")
+        print(f"UDP           : {udp_count}")
+        print(f"ICMP          : {icmp_count}")
+        print(f"Unknown       : {unknown_count}")
+        print("=" * 50)
+
+        print("\nProgram terminated.")
                  
 if __name__ == "__main__":
     main()
