@@ -147,7 +147,7 @@ def get_icmp_description(icmp_type):
         11: "Time Exceeded"
      }
 
-     return description.get(
+     return descriptions.get(
           icmp_type,
           "Other"
      )
