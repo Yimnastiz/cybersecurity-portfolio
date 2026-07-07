@@ -298,13 +298,6 @@ def parse_arguments():
 
 log_file = None
 
-def log(text):
-
-    print(text)
-
-    if log_file:
-        log_file.write(text + "\n")
-
 def get_tcp_flags(syn, ack, fin, rst, psh, urg):
 
     flags = []
@@ -562,8 +555,6 @@ def main():
                 )
 
                 log(Fore.LIGHTWHITE_EX + Style.BRIGHT + summary)
-                if log_file:
-                    log_file.write(summary + "\n")
 
                 log(Fore.RED + "TCP")
                 log(Fore.RED + "-" * 20)
