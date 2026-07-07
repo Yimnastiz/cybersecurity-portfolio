@@ -212,7 +212,30 @@ def format_ascii(data):
             output += "."
 
     return output   
-    
+
+def hex_ascii_dump(data, width=16):
+
+    for i in range(0, len(data), width):
+
+        chunk = data[i:i+width]
+
+        hex_part = ' '.join(
+            f'{byte:02X}'
+            for byte in chunk
+        )
+
+        ascii_part = ""
+
+        for byte in chunk:
+
+            if 32 <= byte <= 126:
+                ascii_part += chr(byte)
+            else:
+                ascii_part += "."
+
+        print(
+            f"{i:04X}  {hex_part:<48} {ascii_part}"
+        )
 
 def main():
 
@@ -339,28 +362,12 @@ def main():
                 if len(payload) > 0:
                      
                     print()
-                    print("Payload (HEX)")
+                    print("Payload")
                     print("-" * 20)
-
-                    print(
-                         format_multi_line(
-                              "",
-                              payload[:64]
-                         )
-                    )
+       
+                    hex_ascii_dump(payload[:64])
 
                     print()
-
-                    print("Payload (ASCII)")
-                    print("-" * 20)
-                    print(
-                         format_ascii(payload[:64]
-                         )
-                    )
-
-                    print()
-
-                    print("Payload (ASCII)")
 
             elif ip_protocol == 17:
                 
