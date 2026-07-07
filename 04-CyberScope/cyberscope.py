@@ -332,6 +332,51 @@ def get_tcp_flags(syn, ack, fin, rst, psh, urg):
 
     return ", ".join(flags)
 
+def packet_summary(
+    protocol,
+    source_ip,
+    destination_ip,
+    source_port,
+    destination_port,
+    packet_size,
+    syn=False,
+    ack=False,
+    fin=False,
+    rst=False,
+    psh=False,
+    urg=False
+):
+
+    flags = []
+
+    if syn:
+        flags.append("SYN")
+
+    if ack:
+        flags.append("ACK")
+
+    if psh:
+        flags.append("PSH")
+
+    if fin:
+        flags.append("FIN")
+
+    if rst:
+        flags.append("RST")
+
+    if urg:
+        flags.append("URG")
+
+    flag_text = ",".join(flags)
+
+    return (
+        f"[{protocol}] "
+        f"{source_ip}:{source_port} -> "
+        f"{destination_ip}:{destination_port} "
+        f"[{flag_text}] "
+        f"{packet_size} Bytes"
+    )
+
 def main():
 
     args = parse_arguments()
@@ -512,6 +557,25 @@ def main():
                 log()
 
                 print()
+                summary = packet_summary(
+                    protocol_name,
+                    source_ip,
+                    destination_ip,
+                    source_port,
+                    destination_port,
+                    packet_size,
+                    syn,
+                    ack,
+                    fin,
+                    rst,
+                    psh,
+                    urg
+                )
+
+                print(Fore.LIGHTWHITE_EX + Style.BRIGHT + summary)
+                if log_file:
+                    log_file.write(summary + "\n")
+                    
                 print(Fore.RED + "TCP")
                 print(Fore.RED + "-" * 20)
                 log(f"Source Port   : {source_port}")
@@ -538,6 +602,8 @@ def main():
                 log(f"URG : {urg}") 
 
                 state = get_tcp_state(syn, ack, fin, rst)
+
+                
 
                 color = Fore.WHITE
 
