@@ -242,7 +242,8 @@ def hex_ascii_dump(data, width=16):
             else:
                 ascii_part += "."
 
-        print(
+        
+        line = (
             Fore.YELLOW +
             f"{i:04X}  "
             + Fore.CYAN +
@@ -250,6 +251,8 @@ def hex_ascii_dump(data, width=16):
             + Fore.GREEN +
             ascii_part
         )
+
+        log(line)
 
 def parse_arguments():
 
@@ -457,7 +460,7 @@ def main():
                     f"{Fore.GREEN}{get_service_name(destination_port)}"
                 )
                 
-                log()
+                print()
                 log("Flags")
                 log("-" * 20)
                 log(f"SYN : {syn}")
@@ -492,13 +495,13 @@ def main():
 
                 if len(payload) > 0:
                      
-                    log()
+                    log("")
                     log(Fore.MAGENTA + "Payload")
                     log(Fore.MAGENTA + "-" * 20)
        
                     hex_ascii_dump(payload[:64])
 
-                    log()
+                    log("")
 
             elif ip_protocol == 17:
                 
@@ -551,7 +554,7 @@ def main():
 
         if log_file:
             log_file.close()
-            
+
         print("\nProgram terminated.")
                  
 if __name__ == "__main__":
