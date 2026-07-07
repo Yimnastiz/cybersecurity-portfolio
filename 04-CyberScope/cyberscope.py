@@ -20,6 +20,7 @@ def log(text=""):
     if log_file:
         clean = ansi_escape.sub("", text)
         log_file.write(clean + "\n")
+        log_file.flush()
 
 def get_mac_address(bytes_address):
 
@@ -377,7 +378,7 @@ def main():
     global log_file
 
     if args.save:
-        log_file = open(args.save, "w")
+        log_file = open(args.save, "w", buffering=1)
 
     sock = socket.socket(
         socket.AF_PACKET,
