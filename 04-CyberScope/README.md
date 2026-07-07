@@ -111,7 +111,7 @@ git clone https://github.com/Yimnastiz/cybersecurity-portfolio.git
 Go to the project
 
 ```bash
-cd cybersecurity-portfolio/03-cyberscope-packet-analyzer
+cd cybersecurity-portfolio/04-CyberScope
 ```
 
 Install dependency
