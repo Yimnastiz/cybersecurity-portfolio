@@ -1,18 +1,41 @@
-# cybersecurity-portfolio
-Cyber Security Projects for Internship
+# CyberScope
 
-# Cyber Security Portfolio
+Python Raw Socket Packet Analyzer
 
-This repository contains my Cyber Security learning projects.
+Features
 
-## Projects
+- Ethernet
+- IPv4
+- TCP
+- UDP
+- ICMP
+- Packet Summary
+- TCP Flags
+- Payload Viewer
+- Hex Dump
+- Save Capture
+- Packet Filters
 
-- Python Basics
-- Port Scanner
-- Packet Sniffer
-- Log Analyzer
-- IDS
 
-Author
+Requirements
 
-Punnawit
+Python 3.10+
+
+pip install colorama
+
+
+Usage
+
+sudo python3 cyberscope.py
+
+sudo python3 cyberscope.py --tcp
+
+sudo python3 cyberscope.py --udp
+
+sudo python3 cyberscope.py --icmp
+
+sudo python3 cyberscope.py --port 80
+
+sudo python3 cyberscope.py --ip 8.8.8.8
+
+sudo python3 cyberscope.py --save capture.txt

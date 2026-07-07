@@ -520,25 +520,6 @@ def main():
 
                 log("")
 
-                log(
-                    Fore.CYAN +
-                    f"[{protocol_name}] "
-                    + Fore.GREEN +
-                    f"{source_ip}:{source_port}"
-                    + Fore.WHITE +
-                    "  -->  "
-                    + Fore.YELLOW +
-                    f"{destination_ip}:{destination_port}"
-                )
-
-                log(
-                    Fore.BLUE +
-                    f"Flags : [{flag_text}]"
-                )
-
-                log("")
-
-                log()
                 summary = packet_summary(
                     protocol_name,
                     source_ip,
