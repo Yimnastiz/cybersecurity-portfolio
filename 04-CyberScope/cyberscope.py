@@ -305,6 +305,33 @@ def log(text):
     if log_file:
         log_file.write(text + "\n")
 
+def get_tcp_flags(syn, ack, fin, rst, psh, urg):
+
+    flags = []
+
+    if syn:
+        flags.append("SYN")
+
+    if ack:
+        flags.append("ACK")
+
+    if fin:
+        flags.append("FIN")
+
+    if rst:
+        flags.append("RST")
+
+    if psh:
+        flags.append("PSH")
+
+    if urg:
+        flags.append("URG")
+
+    if not flags:
+        return "NONE"
+
+    return ", ".join(flags)
+
 def main():
 
     args = parse_arguments()
@@ -321,7 +348,7 @@ def main():
     )
 
     print(Fore.CYAN + "=" * 50)
-    print(Fore.GREEN + Style.BRIGHT + "CyberScope v0.9.5")
+    print(Fore.GREEN + Style.BRIGHT + "CyberScope v0.9.6")
     print(Fore.CYAN + "=" * 50)
     print(Fore.YELLOW + "Listening for packets...\n")
 
@@ -436,6 +463,21 @@ def main():
                     raw_data[tcp_start:]
                 )
 
+                direction = get_packet_direction(
+                    source_ip,
+                    destination_ip,
+                    local_ip
+                )
+
+                flag_text = get_tcp_flags(
+                    syn,
+                    ack,
+                    fin,
+                    rst,
+                    psh,
+                    urg
+                )
+
                 if args.port:
 
                     if (
@@ -443,6 +485,31 @@ def main():
                         destination_port != args.port
                     ):
                         continue
+
+                log()
+
+                log(
+                    Fore.CYAN +
+                    f"[{protocol_name}] "
+                    + Fore.GREEN +
+                    f"{source_ip}:{source_port}"
+                    + Fore.WHITE +
+                    "  -->  "
+                    + Fore.YELLOW +
+                    f"{destination_ip}:{destination_port}"
+                )
+
+                log(
+                    Fore.MAGENTA +
+                    f"Direction : {direction}"
+                )
+
+                log(
+                    Fore.BLUE +
+                    f"Flags : [{flag_text}]"
+                )
+
+                log()
 
                 print()
                 print(Fore.RED + "TCP")
