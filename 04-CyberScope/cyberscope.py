@@ -531,7 +531,7 @@ def main():
                     ):
                         continue
 
-                log()
+                log("")
 
                 log(
                     Fore.CYAN +
@@ -554,7 +554,7 @@ def main():
                     f"Flags : [{flag_text}]"
                 )
 
-                log()
+                log("")
 
                 print()
                 summary = packet_summary(
@@ -575,7 +575,7 @@ def main():
                 print(Fore.LIGHTWHITE_EX + Style.BRIGHT + summary)
                 if log_file:
                     log_file.write(summary + "\n")
-                    
+
                 print(Fore.RED + "TCP")
                 print(Fore.RED + "-" * 20)
                 log(f"Source Port   : {source_port}")
