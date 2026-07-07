@@ -175,6 +175,16 @@ def get_tcp_state(syn, ack, fin, rst):
 
     return "Unknown"
 
+def get_packet_direction(source_ip, destination_ip, local_ip):
+     
+    if source_ip == local_ip:
+        return "Outgoing"
+
+    elif destination_ip == local_ip:
+        return "Incoming"
+
+    return "Forwarded / Unknown"
+
 def format_multi_line(prefix, string, size=16):
      
     size -= len(prefix)
@@ -188,6 +198,20 @@ def format_multi_line(prefix, string, size=16):
         prefix + string[i:i+size]
         for i in range(0, len(string), size)
     )
+
+def format_ascii(data):
+
+    output = ""
+
+    for byte in data:
+
+        if 32 <= byte <= 126:
+            output += chr(byte)
+
+        else:
+            output += "."
+
+    return output   
     
 
 def main():
@@ -227,6 +251,8 @@ def main():
                 source_ip,
                 destination_ip
             ) = ipv4_packet(raw_data[14:])
+
+            local_ip = address[0]
 
             protocol_name = get_protocol_name(ip_protocol)
     
@@ -295,7 +321,8 @@ def main():
                 print(f"Dest Port     : {destination_port}")
                 print(f"Source Service : {get_service_name(source_port)}")
                 print(f"Dest Service   : {get_service_name(destination_port)}")
-
+                
+                print()
                 print("Flags")
                 print("-" * 20)
                 print(f"SYN : {syn}")
@@ -305,14 +332,14 @@ def main():
                 print(f"PSH : {psh}")
                 print(f"URG : {urg}") 
 
-                print(f"TCP State    : {get_tcp_state(syn, ack, fin, rst)}")
+                print(f"TCP State : {get_tcp_state(syn, ack, fin, rst)}")
 
                 payload = raw_data[tcp_start + offset:]
 
                 if len(payload) > 0:
                      
                     print()
-                    print("Payload")
+                    print("Payload (HEX)")
                     print("-" * 20)
 
                     print(
@@ -321,6 +348,19 @@ def main():
                               payload[:64]
                          )
                     )
+
+                    print()
+
+                    print("Payload (ASCII)")
+                    print("-" * 20)
+                    print(
+                         format_ascii(payload[:64]
+                         )
+                    )
+
+                    print()
+
+                    print("Payload (ASCII)")
 
             elif ip_protocol == 17:
                 
