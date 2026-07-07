@@ -536,7 +536,8 @@ def main():
                 )
 
                 log(Fore.LIGHTWHITE_EX + Style.BRIGHT + summary)
-
+                
+                log ("")
                 log(Fore.RED + "TCP")
                 log(Fore.RED + "-" * 20)
                 log(f"Source Port   : {source_port}")
