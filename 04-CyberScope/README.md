@@ -80,23 +80,23 @@ The analyzer can:
 
 ## Program Startup
 
-![Startup](screenshots/startup_v1.0.0.png)
+![Startup](images/startup_v1.0.0.png)
 
 ## TCP Packet
 
-![TCP](screenshots/tcp_packet_v1.0.0.png)
+![TCP](images/tcp_packet_v1.0.0.png)
 
 ## UDP Packet
 
-![UDP](screenshots/udp_packet_v1.0.0.png)
+![UDP](images/udp_packet_v1.0.0.png)
 
 ## Payload
 
-![Payload](screenshots/payload_v1.0.0.png)
+![Payload](images/payload_v1.0.0.png)
 
 ## Statistics
 
-![Statistics](screenshots/statistics_v1.0.0.png)
+![Statistics](images/statistics_v1.0.0.png)
 
 ---
 
