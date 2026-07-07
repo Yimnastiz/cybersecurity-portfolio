@@ -3,6 +3,7 @@ import struct
 import datetime
 import argparse
 import re
+import os
 
 ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
@@ -644,6 +645,10 @@ def main():
             log_file.close()
 
         print("\nProgram terminated.")
+
+        if args.save:
+            print(os.path.abspath(args.save))
+            log_file = open(args.save, "w", buffering=1)
                  
 if __name__ == "__main__":
     main()
