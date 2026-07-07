@@ -2,6 +2,9 @@ import socket
 import struct
 import datetime
 import argparse
+import re
+
+ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 
 from colorama import (
     Fore,
@@ -10,6 +13,13 @@ from colorama import (
 )
 
 init(autoreset=True)
+
+def log(text=""):
+    print(text)
+
+    if log_file:
+        clean = ansi_escape.sub("", text)
+        log_file.write(clean + "\n")
 
 def get_mac_address(bytes_address):
 
@@ -183,16 +193,6 @@ def get_tcp_state(syn, ack, fin, rst):
         return "Connection Established"
 
     return "Unknown"
-
-def get_packet_direction(source_ip, destination_ip, local_ip):
-     
-    if source_ip == local_ip:
-        return "Outgoing"
-
-    elif destination_ip == local_ip:
-        return "Incoming"
-
-    return "Forwarded / Unknown"
 
 def format_multi_line(prefix, string, size=16):
      
@@ -392,10 +392,10 @@ def main():
         socket.ntohs(3)
     )
 
-    print(Fore.CYAN + "=" * 50)
-    print(Fore.GREEN + Style.BRIGHT + "CyberScope v0.9.6")
-    print(Fore.CYAN + "=" * 50)
-    print(Fore.YELLOW + "Listening for packets...\n")
+    log(Fore.CYAN + "=" * 50)
+    log(Fore.GREEN + Style.BRIGHT + "CyberScope v1.0.0")
+    log(Fore.CYAN + "=" * 50)
+    log(Fore.YELLOW + "Listening for packets...\n")
 
     packet_count = 0
     tcp_count = 0
@@ -457,23 +457,23 @@ def main():
                 unknown_count += 1
 
             
-            print(Fore.CYAN + "=" * 50)
+            log(Fore.CYAN + "=" * 50)
             log(Fore.GREEN + f"Packet #{packet_count}")
             log(f"Timestamp : {timestamp}")
             log(f"Packet Size : {packet_size} bytes")
             
-            print()
+            log()
             
-            print(Fore.YELLOW + "Ethernet")
-            print(Fore.YELLOW + "-" * 20)
+            log(Fore.YELLOW + "Ethernet")
+            log(Fore.YELLOW + "-" * 20)
 
             log(f"Source MAC : {Fore.GREEN}{source_mac}")
             log(f"Dest MAC   : {Fore.GREEN}{destination_mac}")
 
-            print()
+            log()
 
-            print(Fore.BLUE + "IPv4")
-            print(Fore.BLUE + "-" * 20)
+            log(Fore.BLUE + "IPv4")
+            log(Fore.BLUE + "-" * 20)
 
             log(f"Version      : {version}")
             log(f"Header Len   : {header_length}")
@@ -488,7 +488,7 @@ def main():
             log(f"Source IP    : {Fore.CYAN}{source_ip}")
             log(f"Dest IP      : {Fore.CYAN}{destination_ip}")
 
-            print("=" * 50)
+            log(Fore.CYAN + "=" * 50)
 
             if ip_protocol == 6:
 
@@ -506,12 +506,6 @@ def main():
                     fin
                 ) = parse_tcp(
                     raw_data[tcp_start:]
-                )
-
-                direction = get_packet_direction(
-                    source_ip,
-                    destination_ip,
-                    local_ip
                 )
 
                 flag_text = get_tcp_flags(
@@ -545,18 +539,13 @@ def main():
                 )
 
                 log(
-                    Fore.MAGENTA +
-                    f"Direction : {direction}"
-                )
-
-                log(
                     Fore.BLUE +
                     f"Flags : [{flag_text}]"
                 )
 
                 log("")
 
-                print()
+                log()
                 summary = packet_summary(
                     protocol_name,
                     source_ip,
@@ -572,12 +561,12 @@ def main():
                     urg
                 )
 
-                print(Fore.LIGHTWHITE_EX + Style.BRIGHT + summary)
+                log(Fore.LIGHTWHITE_EX + Style.BRIGHT + summary)
                 if log_file:
                     log_file.write(summary + "\n")
 
-                print(Fore.RED + "TCP")
-                print(Fore.RED + "-" * 20)
+                log(Fore.RED + "TCP")
+                log(Fore.RED + "-" * 20)
                 log(f"Source Port   : {source_port}")
                 log(f"Dest Port     : {destination_port}")
 
@@ -591,16 +580,8 @@ def main():
                     f"{Fore.GREEN}{get_service_name(destination_port)}"
                 )
                 
-                print()
-                log("Flags")
-                log("-" * 20)
-                log(f"SYN : {syn}")
-                log(f"ACK : {ack}")
-                log(f"FIN : {fin}")
-                log(f"RST : {rst}")
-                log(f"PSH : {psh}")
-                log(f"URG : {urg}") 
-
+                log()
+        
                 state = get_tcp_state(syn, ack, fin, rst)
 
                 
@@ -622,7 +603,7 @@ def main():
                 elif "Reset" in state:
                     color = Fore.RED
 
-                log(f"TCP State : {color}{state}")
+                log(f"State : {color}{state}")
 
                 payload = raw_data[tcp_start + offset:]
 
@@ -644,14 +625,14 @@ def main():
                         raw_data[udp_start:]
                 )
 
-                print()
-                print("UDP")
-                print("-" * 20)
-                print(f"Source Port  : {source_port}")
-                print(f"Dest Port    : {destination_port}")
-                print(f"Source Service : {get_service_name(source_port)}")
-                print(f"Dest Service   : {get_service_name(destination_port)}")
-                print(f"Length       : {length}")
+                log()
+                log("UDP")
+                log("-" * 20)
+                log(f"Source Port  : {source_port}")
+                log(f"Dest Port    : {destination_port}")
+                log(f"Source Service : {get_service_name(source_port)}")
+                log(f"Dest Service   : {get_service_name(destination_port)}")
+                log(f"Length       : {length}")
 
             elif ip_protocol == 1:
                  
@@ -661,12 +642,12 @@ def main():
                       raw_data[icmp_start:]
                 )
 
-                print()
-                print("ICMP")
-                print("-" * 20)
-                print(f"Type        : {icmp_type}")
-                print(f"Code        : {code}")
-                print(
+                log()
+                log("ICMP")
+                log("-" * 20)
+                log(f"Type        : {icmp_type}")
+                log(f"Code        : {code}")
+                log(
                     f"Description : "
                     f"{get_icmp_description(icmp_type)}"
                 )
