@@ -286,11 +286,30 @@ def parse_arguments():
         help="Filter by IP address"
     )
 
+    parser.add_argument(
+        "--save",
+        help="Save captured packets to file"
+    )
+
     return parser.parse_args()
+
+log_file = None
+
+def log(text):
+
+    print(text)
+
+    if log_file:
+        log_file.write(text + "\n")
 
 def main():
 
     args = parse_arguments()
+
+    global log_file
+
+    if args.save:
+        log_file = open(args.save, "w")
 
     sock = socket.socket(
         socket.AF_PACKET,
@@ -364,35 +383,35 @@ def main():
 
             
             print(Fore.CYAN + "=" * 50)
-            print(Fore.GREEN + f"Packet #{packet_count}")
-            print(f"Timestamp : {timestamp}")
-            print(f"Packet Size : {packet_size} bytes")
+            log(Fore.GREEN + f"Packet #{packet_count}")
+            log(f"Timestamp : {timestamp}")
+            log(f"Packet Size : {packet_size} bytes")
             
             print()
             
             print(Fore.YELLOW + "Ethernet")
             print(Fore.YELLOW + "-" * 20)
 
-            print(f"Source MAC : {Fore.GREEN}{source_mac}")
-            print(f"Dest MAC   : {Fore.GREEN}{destination_mac}")
+            log(f"Source MAC : {Fore.GREEN}{source_mac}")
+            log(f"Dest MAC   : {Fore.GREEN}{destination_mac}")
 
             print()
 
             print(Fore.BLUE + "IPv4")
             print(Fore.BLUE + "-" * 20)
 
-            print(f"Version      : {version}")
-            print(f"Header Len   : {header_length}")
-            print(f"TTL          : {ttl}")
+            log(f"Version      : {version}")
+            log(f"Header Len   : {header_length}")
+            log(f"TTL          : {ttl}")
 
-            print(
+            log(
                 f"Protocol     : "
                 f"{Fore.MAGENTA}{protocol_name}"
                 f"{Style.RESET_ALL} ({ip_protocol})"
             )
 
-            print(f"Source IP    : {Fore.CYAN}{source_ip}")
-            print(f"Dest IP      : {Fore.CYAN}{destination_ip}")
+            log(f"Source IP    : {Fore.CYAN}{source_ip}")
+            log(f"Dest IP      : {Fore.CYAN}{destination_ip}")
 
             print("=" * 50)
 
@@ -425,28 +444,28 @@ def main():
                 print()
                 print(Fore.RED + "TCP")
                 print(Fore.RED + "-" * 20)
-                print(f"Source Port   : {source_port}")
-                print(f"Dest Port     : {destination_port}")
+                log(f"Source Port   : {source_port}")
+                log(f"Dest Port     : {destination_port}")
 
-                print(
+                log(
                     f"Source Service : "
                     f"{Fore.GREEN}{get_service_name(source_port)}"
                 )
 
-                print(
+                log(
                     f"Dest Service   : "
                     f"{Fore.GREEN}{get_service_name(destination_port)}"
                 )
                 
-                print()
-                print("Flags")
-                print("-" * 20)
-                print(f"SYN : {syn}")
-                print(f"ACK : {ack}")
-                print(f"FIN : {fin}")
-                print(f"RST : {rst}")
-                print(f"PSH : {psh}")
-                print(f"URG : {urg}") 
+                log()
+                log("Flags")
+                log("-" * 20)
+                log(f"SYN : {syn}")
+                log(f"ACK : {ack}")
+                log(f"FIN : {fin}")
+                log(f"RST : {rst}")
+                log(f"PSH : {psh}")
+                log(f"URG : {urg}") 
 
                 state = get_tcp_state(syn, ack, fin, rst)
 
@@ -467,19 +486,19 @@ def main():
                 elif "Reset" in state:
                     color = Fore.RED
 
-                print(f"TCP State : {color}{state}")
+                log(f"TCP State : {color}{state}")
 
                 payload = raw_data[tcp_start + offset:]
 
                 if len(payload) > 0:
                      
-                    print()
-                    print(Fore.MAGENTA + "Payload")
-                    print(Fore.MAGENTA + "-" * 20)
+                    log()
+                    log(Fore.MAGENTA + "Payload")
+                    log(Fore.MAGENTA + "-" * 20)
        
                     hex_ascii_dump(payload[:64])
 
-                    print()
+                    log()
 
             elif ip_protocol == 17:
                 
@@ -518,18 +537,21 @@ def main():
 
     except KeyboardInterrupt:
 
-        print("\n")
+        log("\n")
 
-        print("=" * 50)
-        print("Statistics")
-        print("-" * 20)
-        print(f"Total Packets : {packet_count}")
-        print(f"TCP           : {tcp_count}")
-        print(f"UDP           : {udp_count}")
-        print(f"ICMP          : {icmp_count}")
-        print(f"Unknown       : {unknown_count}")
-        print("=" * 50)
+        log("=" * 50)
+        log("Statistics")
+        log("-" * 20)
+        log(f"Total Packets : {packet_count}")
+        log(f"TCP           : {tcp_count}")
+        log(f"UDP           : {udp_count}")
+        log(f"ICMP          : {icmp_count}")
+        log(f"Unknown       : {unknown_count}")
+        log("=" * 50)
 
+        if log_file:
+            log_file.close()
+            
         print("\nProgram terminated.")
                  
 if __name__ == "__main__":
