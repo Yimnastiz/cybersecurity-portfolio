@@ -1,6 +1,15 @@
 import socket   
 import struct
 import datetime
+import argparse
+
+from colorama import (
+    Fore,
+    Style,
+    init
+)
+
+init(autoreset=True)
 
 def get_mac_address(bytes_address):
 
@@ -234,10 +243,54 @@ def hex_ascii_dump(data, width=16):
                 ascii_part += "."
 
         print(
-            f"{i:04X}  {hex_part:<48} {ascii_part}"
+            Fore.YELLOW +
+            f"{i:04X}  "
+            + Fore.CYAN +
+            f"{hex_part:<48} "
+            + Fore.GREEN +
+            ascii_part
         )
 
+def parse_arguments():
+
+    parser = argparse.ArgumentParser(
+        description="CyberScope Packet Analyzer"
+    )
+
+    parser.add_argument(
+        "--tcp",
+        action="store_true",
+        help="Show TCP packets only"
+    )
+
+    parser.add_argument(
+        "--udp",
+        action="store_true",
+        help="Show UDP packets only"
+    )
+
+    parser.add_argument(
+        "--icmp",
+        action="store_true",
+        help="Show ICMP packets only"
+    )
+
+    parser.add_argument(
+        "--port",
+        type=int,
+        help="Filter by port"
+    )
+
+    parser.add_argument(
+        "--ip",
+        help="Filter by IP address"
+    )
+
+    return parser.parse_args()
+
 def main():
+
+    args = parse_arguments()
 
     sock = socket.socket(
         socket.AF_PACKET,
@@ -245,10 +298,10 @@ def main():
         socket.ntohs(3)
     )
 
-    print("=" * 50)
-    print("CyberScope v0.9.3")
-    print("=" * 50)
-    print("Listening for packets ... \n")
+    print(Fore.CYAN + "=" * 50)
+    print(Fore.GREEN + Style.BRIGHT + "CyberScope v0.9.5")
+    print(Fore.CYAN + "=" * 50)
+    print(Fore.YELLOW + "Listening for packets...\n")
 
     packet_count = 0
     tcp_count = 0
@@ -278,6 +331,22 @@ def main():
             local_ip = address[0]
 
             protocol_name = get_protocol_name(ip_protocol)
+
+            if args.ip:
+                if (
+                    source_ip != args.ip and
+                    destination_ip != args.ip
+                ):
+                    continue
+
+            if args.tcp and ip_protocol != 6:
+                continue
+
+            if args.udp and ip_protocol != 17:
+                continue
+
+            if args.icmp and ip_protocol != 1:
+                continue
     
             packet_count += 1
 
@@ -293,29 +362,37 @@ def main():
             else:
                 unknown_count += 1
 
-            print("=" * 50)
-
-            print(f"Packet #{packet_count}")
+            
+            print(Fore.CYAN + "=" * 50)
+            print(Fore.GREEN + f"Packet #{packet_count}")
             print(f"Timestamp : {timestamp}")
             print(f"Packet Size : {packet_size} bytes")
             
             print()
             
-            print("Ethernet")
-            print("-" * 20)
-            print(f"Source MAC: {source_mac}")
-            print(f"Dest MAC  : {destination_mac}")
+            print(Fore.YELLOW + "Ethernet")
+            print(Fore.YELLOW + "-" * 20)
+
+            print(f"Source MAC : {Fore.GREEN}{source_mac}")
+            print(f"Dest MAC   : {Fore.GREEN}{destination_mac}")
 
             print()
 
-            print("IPv4")
-            print("-" * 20)
+            print(Fore.BLUE + "IPv4")
+            print(Fore.BLUE + "-" * 20)
+
             print(f"Version      : {version}")
             print(f"Header Len   : {header_length}")
             print(f"TTL          : {ttl}")
-            print(f"Protocol     : {protocol_name} ({ip_protocol})")
-            print(f"Source IP    : {source_ip}")
-            print(f"Dest IP      : {destination_ip}")
+
+            print(
+                f"Protocol     : "
+                f"{Fore.MAGENTA}{protocol_name}"
+                f"{Style.RESET_ALL} ({ip_protocol})"
+            )
+
+            print(f"Source IP    : {Fore.CYAN}{source_ip}")
+            print(f"Dest IP      : {Fore.CYAN}{destination_ip}")
 
             print("=" * 50)
 
@@ -337,13 +414,29 @@ def main():
                     raw_data[tcp_start:]
                 )
 
+                if args.port:
+
+                    if (
+                        source_port != args.port and
+                        destination_port != args.port
+                    ):
+                        continue
+
                 print()
-                print("TCP")
-                print("-" * 20)
+                print(Fore.RED + "TCP")
+                print(Fore.RED + "-" * 20)
                 print(f"Source Port   : {source_port}")
                 print(f"Dest Port     : {destination_port}")
-                print(f"Source Service : {get_service_name(source_port)}")
-                print(f"Dest Service   : {get_service_name(destination_port)}")
+
+                print(
+                    f"Source Service : "
+                    f"{Fore.GREEN}{get_service_name(source_port)}"
+                )
+
+                print(
+                    f"Dest Service   : "
+                    f"{Fore.GREEN}{get_service_name(destination_port)}"
+                )
                 
                 print()
                 print("Flags")
@@ -355,15 +448,34 @@ def main():
                 print(f"PSH : {psh}")
                 print(f"URG : {urg}") 
 
-                print(f"TCP State : {get_tcp_state(syn, ack, fin, rst)}")
+                state = get_tcp_state(syn, ack, fin, rst)
+
+                color = Fore.WHITE
+
+                if "Established" in state:
+                    color = Fore.GREEN
+
+                elif "Start" in state:
+                    color = Fore.YELLOW
+
+                elif "Accepted" in state:
+                    color = Fore.CYAN
+
+                elif "Closing" in state:
+                    color = Fore.MAGENTA
+
+                elif "Reset" in state:
+                    color = Fore.RED
+
+                print(f"TCP State : {color}{state}")
 
                 payload = raw_data[tcp_start + offset:]
 
                 if len(payload) > 0:
                      
                     print()
-                    print("Payload")
-                    print("-" * 20)
+                    print(Fore.MAGENTA + "Payload")
+                    print(Fore.MAGENTA + "-" * 20)
        
                     hex_ascii_dump(payload[:64])
 
